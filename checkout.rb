@@ -1,49 +1,47 @@
+# frozen_string_literal: true
+
 class Checkout
+  PRICES = {
+    'A' => 30,
+    'B' => 20,
+    'C' => 50,
+    'D' => 15
+  }.freeze
 
-  def initialize()
-    @prices = {
-      "A" => 30,
-      "B" => 20,
-      "C" => 50,
-      "D" => 15
-    }
-
-    @counter  = Hash.new(0)
-
+  def initialize
+    @counter = Hash.new(0)
     @purchasing_array = []
   end
 
   def scan(item)
-    @purchasing_array.push(item)
-    @counter[item] +=1
+    purchasing_array.push(item)
+    counter[item] += 1
   end
 
   def total
-    totalPrice = 0
+    total_price = 0
 
-    @counter.each do |key, count|
-      totalPrice += @prices[key]*count
-
-      totalPrice = self.useRules(totalPrice, key, count)
-
+    counter.each do |key, count|
+      total_price += PRICES[key] * count
+      total_price = use_rules(total_price, key, count)
     end
+    total_price -= 20 if total_price > 150
 
-    if totalPrice > 150
-      totalPrice -= 20
-    end
-
-    return totalPrice
+    total_price
   end
 
-  def useRules(price, key, count) 
-    case key  
-      when "A"
-        price -= (count/3)*15
-      when "B"
-        price -= (count/2)*5
+  private
+
+  attr_reader :counter, :purchasing_array
+
+  def use_rules(price, key, count)
+    case key
+    when 'A'
+      price -= (count / 3) * 15
+    when 'B'
+      price -= (count / 2) * 5
     end
 
-    return price
-
+    price
   end
 end
